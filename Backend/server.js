@@ -1,4 +1,5 @@
 const express = require("express");
+const connectDB = require("./config/db");
 const workoutRoutes = require("./routes/workouts");
 require("dotenv").config();
 // express app
@@ -13,6 +14,8 @@ app.use((req, res, next) => {
 
 app.use("/api/workouts", workoutRoutes);
 
+// connect to the db
+connectDB();
 //listen for requests
 app.listen(process.env.PORT, () => {
   console.log("listening on port", process.env.PORT);
