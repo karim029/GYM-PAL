@@ -3,7 +3,7 @@ import { useWorkoutsContext } from "../hooks/useWorkoutsContext";
 
 const WorkoutForm = () => {
   const { dispatch } = useWorkoutsContext();
-  const [title, setTtile] = useState("");
+  const [title, setTitle] = useState("");
   const [load, setLoad] = useState("");
   const [reps, setReps] = useState("");
   const [error, setError] = useState(null);
@@ -11,34 +11,47 @@ const WorkoutForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const Workout = { title, load, reps };
-    const response = await fetch("/api/workouts", {
-      method: "POST",
-      body: JSON.stringify(Workout),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const json = await response.json();
-    if (!response.ok) {
-      setError(json.error);
-      setEmptyFields(json.emptyFields);
+
+    const workout = { title, load, reps };
+
+    try {
+      const response = await fetch("/api/workouts", {
+        method: "POST",
+        body: JSON.stringify(workout),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const json = await response.json();
+
+      if (!response.ok) {
+        // Handle validation errors without console logs
+        setError(json.error);
+        setEmptyFields(json.emptyfields || []);
+        return;
+      }
+
+      // Reset the form and update the global state on success
+      setTitle("");
+      setLoad("");
+      setReps("");
+      setError(null);
+      setEmptyFields([]);
+      dispatch({ type: "CREATE_WORKOUT", payload: json.data });
+      console.log("New workout added:", json.data);
+    } catch (err) {
+      console.error("Network error:", err.message);
     }
-    setTtile("");
-    setLoad("");
-    setReps("");
-    setError(null);
-    setEmptyFields([]);
-    console.log("new workout added", json);
-    dispatch({ type: "CREATE_WORKOUT", payload: json });
   };
+
   return (
     <form className="create" onSubmit={handleSubmit}>
-      <h3>Add a new Workout</h3>
+      <h3>Add a New Workout</h3>
       <label>Exercise Title:</label>
       <input
         type="text"
-        onChange={(e) => setTtile(e.target.value)}
+        onChange={(e) => setTitle(e.target.value)}
         value={title}
         className={emptyFields.includes("title") ? "error" : ""}
       />

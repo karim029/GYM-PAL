@@ -19,23 +19,21 @@ const createWorkoutController = async (req, res) => {
       emptyfields.push("load");
     }
     if (!reps) {
-      emptyfields.push("load");
+      emptyfields.push("reps");
     }
 
     if (emptyfields.length > 0) {
-      return res
-        .status(400)
-        .json({
-          error: "Please fill in all the fields",
-          emptyfields: emptyfields,
-        });
+      return res.status(400).json({
+        error: "Please fill in all the fields",
+        emptyfields,
+      });
     }
     const workout = await createWorkout(title, reps, load);
     return res
       .status(200)
       .json({ message: "Workout Created successfully", data: workout });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error.message, emptyfields });
   }
 };
 const getAllWorkoutsController = async (req, res) => {
@@ -81,7 +79,7 @@ const deleteWorkoutController = async (req, res) => {
     if (!deletedWorkout) {
       return res.status(404).json({ message: "Workout not found" });
     }
-    res.status(200).json(deleteWorkout);
+    res.status(200).json(deletedWorkout);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
