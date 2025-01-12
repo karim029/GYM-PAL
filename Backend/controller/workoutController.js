@@ -9,8 +9,26 @@ const {
 const createWorkoutController = async (req, res) => {
   try {
     const { title, reps, load } = req.body;
-    if (!title || !reps || !load) {
-      return res.status(400).json({ message: "Please enter valid data" });
+
+    let emptyfields = [];
+
+    if (!title) {
+      emptyfields.push("title");
+    }
+    if (!load) {
+      emptyfields.push("load");
+    }
+    if (!reps) {
+      emptyfields.push("load");
+    }
+
+    if (emptyfields.length > 0) {
+      return res
+        .status(400)
+        .json({
+          error: "Please fill in all the fields",
+          emptyfields: emptyfields,
+        });
     }
     const workout = await createWorkout(title, reps, load);
     return res
