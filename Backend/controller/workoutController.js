@@ -63,7 +63,7 @@ const deleteWorkoutController = async (req, res) => {
     if (!deletedWorkout) {
       return res.status(404).json({ message: "Workout not found" });
     }
-    res.status(204).send();
+    res.status(200).json(deleteWorkout);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
