@@ -27,8 +27,9 @@ const createWorkoutController = async (req, res) => {
         error: "Please fill in all the fields",
         emptyfields,
       });
+      const user_id = req.user._id;
     }
-    const workout = await createWorkout(title, reps, load);
+    const workout = await createWorkout(title, reps, load, user_id);
     return res
       .status(200)
       .json({ message: "Workout Created successfully", data: workout });
@@ -38,7 +39,8 @@ const createWorkoutController = async (req, res) => {
 };
 const getAllWorkoutsController = async (req, res) => {
   try {
-    const workouts = await getAllWorkouts();
+    const user_id = req.user._id;
+    const workouts = await getAllWorkouts(user_id);
     res.status(200).json(workouts);
   } catch (error) {
     res.status(500).json({ error: error.message });

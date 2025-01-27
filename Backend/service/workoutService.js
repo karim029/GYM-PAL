@@ -5,8 +5,8 @@ const createWorkout = async (title, reps, load) => {
   return await workout.save();
 };
 
-const getAllWorkouts = async () => {
-  return await Workout.find();
+const getAllWorkouts = async (user_id) => {
+  return await Workout.find({ user_id }).sort({ createdAt: -1 });
 };
 
 const getWorkout = async (id) => {
